@@ -33,9 +33,14 @@ def design(cfg,seq: str, id) -> list:
     if cfg.get("AVOID_GC_AT_3_PRIME"):
         global_args["PRIMER_3_END_GC_CLAMP"] = 0
 
-    res = primer3.bindings.design_primers(
-        seq_args=seq_args,
-        global_args=global_args
+    # ``primer3`` exposes ``designPrimers``. Using keyword arguments would
+    # raise a ``TypeError`` because the function expects the dictionaries
+    # as positional parameters.  Calling the correct function name and
+    # passing the arguments positionally avoids runtime errors when
+    # generating the primer pairs.
+    res = primer3.bindings.designPrimers(
+        seq_args,
+        global_args,
     )
 
     primers = []
@@ -51,14 +56,12 @@ def design(cfg,seq: str, id) -> list:
     return primers
 
 if __name__=="__main__":
-    "para correr el script, usar: python design_primers.py <input.fasta> <params.json> <output.json>"
-    "ejemplo: "
-#    python .\src\design_primers.py `
-#   .\output\fastas\lep-sequence_XP_005250397.1_cds.fasta `
-#   .\src\params.json `
-#   .\output\primers
+    # Example usage:
+    #   python design_primers.py <input.fasta> <params.json> <output_dir>
+    # The results will be written inside ``<output_dir>`` as
+    # ``resultados_<input>.json``.
     if len(sys.argv)!=4:
-        print("Uso: design_primers.py <input.fasta> <params.json> <output.json>")
+        print("Uso: design_primers.py <input.fasta> <params.json> <output_dir>")
         sys.exit(1)
 
     fasta, cfg_fn, out_fn = sys.argv[1], sys.argv[2], sys.argv[3]
