@@ -39,3 +39,17 @@ Install requirements with:
 ```bash
 pip install -r requirements.txt
 ```
+
+## Designing primers
+
+To automatically design PCR primers for the extracted CDS sequences run
+`design_primers.sh` from the `src` directory:
+
+```bash
+cd src
+bash design_primers.sh
+```
+
+The script installs the required dependencies (including `primer3-py`) and
+invokes `design_primers.py` for every `*_cds.fasta` in `../outputs/fastas`. The
+results are saved in `../outputs/primers`.
